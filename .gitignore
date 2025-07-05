@@ -2,4 +2,4 @@ __pycache__/
 .env
 jobs.db
 *.pyc
-.DS_Store
+.DS_Store.venv/
