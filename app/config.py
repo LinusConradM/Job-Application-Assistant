@@ -1,0 +1,14 @@
+from typing import Optional
+from pydantic import BaseSettings, AnyHttpUrl
+
+
+class Settings(BaseSettings):
+    JOB_URL: Optional[AnyHttpUrl] = None
+    SCRAPE_INTERVAL_MINUTES: int = 60
+    DATABASE_URL: str = "sqlite:///./jobs.db"
+
+    class Config:
+        env_file = ".env"
+
+
+settings = Settings()
