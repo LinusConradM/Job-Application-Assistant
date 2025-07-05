@@ -41,7 +41,7 @@ def main():
         table = gr.Dataframe(
             headers=["Title", "Company", "Description", "Location", "Skills", "Salary"],
             row_count=(0, None),
-            col_count=(0, 6),
+            col_count=6,
         )
         btn.click(fn=fetch_and_list, inputs=None, outputs=table)
     demo.launch(server_name="0.0.0.0", server_port=int(os.getenv("PORT", 7860)))
