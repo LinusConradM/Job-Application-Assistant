@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from fastapi import FastAPI, Depends
@@ -10,6 +11,7 @@ from .tasks import start_scheduler
 
 
 app = FastAPI(title="Job Application Assistant")
+logging.basicConfig(level=logging.INFO)
 
 
 @app.on_event("startup")
