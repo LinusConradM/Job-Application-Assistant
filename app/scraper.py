@@ -1,4 +1,5 @@
 import time
+import logging
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -6,8 +7,12 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 from .config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class JobScraper:
@@ -18,11 +23,15 @@ class JobScraper:
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
-        self.driver = webdriver.Chrome(options=chrome_options)
+        self.driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()),
+            options=chrome_options,
+        )
         self.url = url
 
     def fetch_jobs(self):
         jobs = []
+        logger.info("Fetching jobs from %s", self.url)
         try:
             self.driver.get(self.url)
             WebDriverWait(self.driver, 10).until(
@@ -51,10 +60,14 @@ class JobScraper:
                     })
                 except Exception:
                     continue
-        except WebDriverException:
-            pass
+        except WebDriverException as e:
+            logger.error("Error loading page %s: %s", self.url, e)
+            return jobs
+
+        logger.info("Found %d job listings", len(jobs))
         return jobs
 
     def close(self):
         if self.driver:
+            logger.info("Closing Selenium WebDriver")
             self.driver.quit()

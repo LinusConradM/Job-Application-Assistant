@@ -1,6 +1,11 @@
+
 import uuid
 import shutil
 from pathlib import Path
+
+import logging
+from typing import List
+
 
 from typing import List
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
@@ -15,6 +20,7 @@ from .utils import parse_cv_file
 
 
 app = FastAPI(title="Job Application Assistant")
+logging.basicConfig(level=logging.INFO)
 
 
 @app.on_event("startup")
