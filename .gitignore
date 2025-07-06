@@ -3,3 +3,4 @@ __pycache__/
 jobs.db
 *.pyc
 .DS_Store.venv/
+.venv/
