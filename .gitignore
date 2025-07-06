@@ -4,3 +4,4 @@ jobs.db
 *.pyc
 .DS_Store.venv/
 uploads/
+.venv/
