@@ -32,3 +32,18 @@ class CVSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class SuggestionsSchema(BaseModel):
+    missing_skills: List[str]
+    missing_certifications: List[str]
+    missing_software_tools: List[str]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "missing_skills": ["Skill A", "Skill B"],
+                "missing_certifications": ["Certification X"],
+                "missing_software_tools": ["Tool Y"]
+            }
+        }

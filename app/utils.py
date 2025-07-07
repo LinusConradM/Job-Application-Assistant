@@ -93,3 +93,37 @@ def _parse_cv_text(text: str) -> dict:
         "work_history": parse_experience(sections.get("work_history")),
         "education": parse_experience(sections.get("education")),
     }
+
+
+def analyze_cv_vs_job(cv, job) -> dict:
+    """
+    Compare a CV against a job posting and return suggestions for missing skills,
+    certifications, and software tools.
+    """
+    cv_skills_text = (cv.skills or "").lower()
+    job_skills_raw = [s.strip() for s in re.split(r"[,\n;]+", job.skills or "") if s.strip()]
+    missing_skills = [skill for skill in job_skills_raw if skill.lower() not in cv_skills_text]
+
+    cert_pattern = re.compile(r"\b[A-Za-z0-9+ ]+(?:[Cc]ertified|[Cc]ertification)\b")
+    job_certifications = {
+        match.strip()
+        for match in cert_pattern.findall(" ".join([job.description or "", job.skills or ""]))
+    }
+    cv_certifications = {
+        match.strip()
+        for match in cert_pattern.findall(" ".join([cv.skills or "", cv.professional_summary or ""]))
+    }
+    missing_certifications = sorted(job_certifications - cv_certifications)
+
+    tools_pattern = re.compile(r"\b(?:with|using|in)\s+([A-Za-z0-9+,& ]+)", flags=re.IGNORECASE)
+    job_desc = job.description or ""
+    tools_matches = []
+    for match in tools_pattern.findall(job_desc):
+        tools_matches.extend([t.strip() for t in re.split(r"[,\n;]| and ", match) if t.strip()])
+    missing_software_tools = [tool for tool in tools_matches if tool.lower() not in cv_skills_text]
+
+    return {
+        "missing_skills": missing_skills,
+        "missing_certifications": missing_certifications,
+        "missing_software_tools": missing_software_tools,
+    }
