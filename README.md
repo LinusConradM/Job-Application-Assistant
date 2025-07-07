@@ -47,6 +47,17 @@ DATABASE_URL=sqlite:///./jobs.db
   curl http://127.0.0.1:8000/jobs
   ```
 
+-- Suggest CV improvements via:
+  ```bash
+  curl http://127.0.0.1:8000/cvs/{cv_id}/jobs/{job_id}/suggestions
+  ```
+
+Response example:
+
+```json
+{"missing_skills": ["Skill A", "Skill B"], "missing_certifications": ["Certification X"], "missing_software_tools": ["Tool Y"]}
+```
+
 ## Gradio UI
 
 You can also launch an interactive Gradio interface to fetch and view jobs in your browser:
