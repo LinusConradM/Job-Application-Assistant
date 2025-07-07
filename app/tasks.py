@@ -1,4 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
+import logging
+
+logger = logging.getLogger(__name__)
 
 from .database import SessionLocal, init_db
 from .models import Job
@@ -7,6 +10,7 @@ from .config import settings
 
 
 def scrape_and_store():
+    logger.info("Starting job scraping and storage")
     init_db()
     scraper = JobScraper()
     jobs = scraper.fetch_jobs()
@@ -20,12 +24,15 @@ def scrape_and_store():
 
 
 def start_scheduler():
+    logger.info(
+        "Starting scheduler: scraping every %s minutes",
+        settings.SCRAPE_INTERVAL_MINUTES,
+    )
     scheduler = BackgroundScheduler()
     scheduler.add_job(
         scrape_and_store,
         "interval",
         minutes=settings.SCRAPE_INTERVAL_MINUTES,
-        next_run_time=None,
     )
     scheduler.start()
     scrape_and_store()
