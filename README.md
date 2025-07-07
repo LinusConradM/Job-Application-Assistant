@@ -57,6 +57,14 @@ python gradio_app.py
 
 Open the local URL shown in the console and click **Fetch Jobs Now** to scrape from the configured portal and display stored listings.
 
+### ATS Assessment
+
+Within the Gradio interface, after fetching jobs, you can upload your CV (PDF or TXT), select a specific job from the dropdown, and click **Assess CV**. The system will display:
+
+- Match percentage of your CV against the job's required skills
+- List of missing skills
+- Red flags (e.g., employment gap > 12 months)
+
 ## Deploying on Hugging Face Spaces
 
 1. Push this repository to a new Hugging Face Space (select **Gradio** as the SDK).
