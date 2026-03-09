@@ -14,9 +14,9 @@ from sqlalchemy.orm import Session
 from .config import settings
 from .database import init_db, SessionLocal
 from .models import CV, Job
-from .schemas import CVSchema, JobSchema
+from .schemas import CVSchema, JobSchema, SuggestionsSchema
 from .tasks import start_scheduler
-from .utils import parse_cv_file
+from .utils import parse_cv_file, analyze_cv_vs_job
 
 
 app = FastAPI(title="Job Application Assistant")
@@ -63,3 +63,15 @@ def upload_cv(file: UploadFile = File(...), db: Session = Depends(get_db)):
     db.commit()
     db.refresh(cv)
     return cv
+
+
+@app.get("/cvs/{cv_id}/jobs/{job_id}/suggestions", response_model=SuggestionsSchema)
+def suggest_cv_improvements(cv_id: int, job_id: int, db: Session = Depends(get_db)):
+    cv = db.query(CV).filter(CV.id == cv_id).first()
+    if not cv:
+        raise HTTPException(status_code=404, detail="CV not found")
+    job = db.query(Job).filter(Job.id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    suggestions = analyze_cv_vs_job(cv, job)
+    return suggestions
